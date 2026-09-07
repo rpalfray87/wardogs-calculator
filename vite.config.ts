@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 //  - Electron charge les fichiers en file://  -> chemins relatifs, pas de service worker
 //  - GitHub Pages sert le site sous un sous-chemin -> base absolue
 const isElectron = process.env.BUILD_TARGET === 'electron';
-const repoBase = process.env.PAGES_BASE ?? '/artillery-calculator-wd/';
+const repoBase = process.env.PAGES_BASE ?? '/Wardogs-calculator/';
 
 export default defineConfig({
   base: isElectron ? './' : repoBase,
@@ -19,8 +19,8 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
             manifest: {
-              name: 'Wardogs Artillery Calculator',
-              short_name: 'WD Artillery',
+              name: 'Wardogs Calculator',
+              short_name: 'Wardogs',
               description: "Azimut et distance pour le mortier dans Wardogs.",
               lang: 'fr',
               start_url: '.',

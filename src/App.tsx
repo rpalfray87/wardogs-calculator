@@ -149,7 +149,7 @@ export default function App() {
     <div className="app">
       <header className="titlebar">
         <span className="titlebar__mark" aria-hidden="true" />
-        <h1 className="titlebar__title">Wardogs · Mortier</h1>
+        <h1 className="titlebar__title">Wardogs Calculator</h1>
         <button
           type="button"
           className="icon-btn"

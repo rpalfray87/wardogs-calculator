@@ -1,5 +1,5 @@
 {
-  "name": "wardogs-artillery-calculator",
+  "name": "wardogs-calculator",
   "private": true,
   "version": "1.0.0",
   "description": "Calculateur d'azimut et de distance pour le mortier / l'artillerie dans Wardogs.",
@@ -36,11 +36,11 @@
     "wait-on": "^8.0.1"
   },
   "build": {
-    "appId": "com.wardogs.artillery",
-    "productName": "Wardogs Artillery",
+    "appId": "com.wardogs.calculator",
+    "productName": "Wardogs Calculator",
     "directories": { "output": "release", "buildResources": "build" },
     "files": ["dist/**/*", "electron/**/*", "build/icon.png"],
     "win": { "target": "portable", "icon": "build/icon.png" },
-    "portable": { "artifactName": "WardogsArtillery-${version}.exe" }
+    "portable": { "artifactName": "WardogsCalculator-${version}.exe" }
   }
 }

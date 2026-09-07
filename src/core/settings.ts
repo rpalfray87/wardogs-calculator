@@ -22,9 +22,9 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 export const STORAGE_KEYS = {
-  settings: 'wd-artillery.settings',
-  origin: 'wd-artillery.origin',
-  history: 'wd-artillery.history',
+  settings: 'wardogs-calculator.settings',
+  origin: 'wardogs-calculator.origin',
+  history: 'wardogs-calculator.history',
 } as const;
 
 export interface HistoryEntry {

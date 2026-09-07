@@ -1,4 +1,4 @@
-# Wardogs Artillery Calculator
+# Wardogs Calculator
 
 Calculateur d'**azimut** et de **distance** pour jouer mortier / artillerie dans Wardogs.
 On entre sa position et celle de la cible, l'app donne où pointer le tube. Rien d'autre :
@@ -77,7 +77,7 @@ npm run typecheck
 
 ```bash
 npm run build      # PWA -> dist/
-npm run build:win  # overlay portable -> release/WardogsArtillery-1.0.0.exe
+npm run build:win  # overlay portable -> release/WardogsCalculator-1.0.0.exe
 npm run icons      # régénère les PNG depuis scripts/gen-icons.mjs
 ```
 

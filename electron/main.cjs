@@ -180,7 +180,7 @@ function registerHotkey(accelerator) {
 
 function refreshTrayMenu() {
   if (!tray) return;
-  tray.setToolTip(`Wardogs Artillery — ${hotkey}`);
+  tray.setToolTip(`Wardogs Calculator — ${hotkey}`);
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: `Afficher / masquer (${hotkey})`, click: toggleOverlay },
@@ -235,7 +235,7 @@ if (!app.requestSingleInstanceLock()) {
   app.on('second-instance', showOverlay);
 
   app.whenReady().then(() => {
-    app.setAppUserModelId('com.wardogs.artillery');
+    app.setAppUserModelId('com.wardogs.calculator');
     hotkey = loadState().hotkey || DEFAULT_HOTKEY;
     createWindow();
     createTray();
