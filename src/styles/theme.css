@@ -6,7 +6,6 @@
   --text: #e8e8e6;
   --muted: #8a8f98;
   --accent: #f5c518;
-  --accent-soft: rgba(245, 197, 24, 0.12);
   --error: #e5484d;
   --radius: 12px;
   --gap: 10px;
@@ -19,37 +18,59 @@
   box-sizing: border-box;
 }
 
+/* La page elle-meme ne defile jamais : la barre de defilement du navigateur
+   apparaissait en dehors de la carte, ce qui n'a aucun sens pour un overlay.
+   Seule la liste d'historique defile, a l'interieur. */
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* En overlay la fenetre Electron est transparente : seule la carte est peinte. */
 body[data-electron="true"],
 body[data-electron="true"] #root {
   background: transparent;
 }
 
 #root {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
+  align-items: stretch;
 }
 
 .app {
+  position: relative;
   width: 100%;
   max-width: 420px;
+  max-height: 100%;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* Zone souple : tout ce qui est fixe garde sa taille, l'historique absorbe le reste. */
+.app__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.titlebar,
+.block,
+.result,
+.footer {
+  flex: none;
 }
 
 @media (min-width: 460px) {
@@ -73,8 +94,8 @@ body[data-electron="true"] #root {
 .titlebar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
+  gap: 6px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--border);
   background: var(--panel);
 }
@@ -90,6 +111,7 @@ body[data-electron="true"] .titlebar {
   border-radius: 2px;
   background: var(--accent);
   flex: none;
+  margin-right: 2px;
 }
 
 .titlebar__title {
@@ -98,7 +120,7 @@ body[data-electron="true"] .titlebar {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-right: auto;
+  margin: 0 auto 0 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -122,8 +144,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  height: 30px;
+  min-width: 28px;
+  height: 28px;
   padding: 0 8px;
   border-radius: 8px;
   border: 1px solid transparent;
@@ -139,7 +161,6 @@ button {
 }
 
 .icon-btn:focus-visible,
-.seg button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 .history__row:focus-visible {
@@ -147,25 +168,20 @@ select:focus-visible,
   outline-offset: 1px;
 }
 
-.icon-btn[aria-pressed="true"] {
-  color: var(--accent);
-  border-color: var(--border);
-  background: var(--accent-soft);
-}
-
 /* ---------- blocs de saisie ---------- */
 
 .block {
-  padding: 12px;
+  padding: 9px 10px;
   border-bottom: 1px solid var(--border);
 }
 
 .block__head {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
-  min-height: 30px;
+  margin-bottom: 5px;
+  min-height: 24px;
 }
 
 .block__title {
@@ -174,7 +190,7 @@ select:focus-visible,
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-right: auto;
+  margin: 0 auto 0 0;
 }
 
 .block__grid {
@@ -183,23 +199,28 @@ select:focus-visible,
   gap: var(--gap);
 }
 
+/* L'axe est une pastille dans le champ : on economise une ligne de label par
+   bloc, soit assez de hauteur pour ne jamais avoir a defiler. */
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  position: relative;
 }
 
-.field__label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  padding-left: 2px;
+.field__tag {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #5b6069;
+  pointer-events: none;
 }
 
 .field input {
   width: 100%;
-  height: 48px;
-  padding: 0 12px;
+  height: 46px;
+  padding: 0 12px 0 29px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--panel);
@@ -208,10 +229,6 @@ select:focus-visible,
   font-size: 19px;
   font-variant-numeric: tabular-nums;
   transition: border-color 0.12s, background 0.12s;
-}
-
-.field input::placeholder {
-  color: #4b5058;
 }
 
 .field input:focus {
@@ -227,15 +244,8 @@ select:focus-visible,
 /* ---------- resultat ---------- */
 
 .result {
-  padding: 14px 12px 16px;
+  padding: 9px 10px 11px;
   border-bottom: 1px solid var(--border);
-}
-
-.result__head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
 }
 
 .result__label {
@@ -244,55 +254,37 @@ select:focus-visible,
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-right: auto;
+  margin: 0 0 1px;
 }
 
-.seg {
-  display: inline-flex;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--panel);
-}
-
-.seg button {
-  padding: 6px 10px;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-  color: var(--muted);
-  line-height: 1;
-}
-
-.seg button[aria-pressed="true"] {
-  background: var(--accent);
-  color: #14150f;
+.result__label--sub {
+  margin-top: 6px;
 }
 
 .readout {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 2px 4px;
+  padding: 0 3px;
   border-radius: 8px;
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  line-height: 1.05;
+  line-height: 1.06;
   white-space: nowrap;
 }
 
-.readout:hover {
+.readout:hover:not(:disabled) {
   background: var(--panel);
 }
 
 .readout--azimuth {
-  font-size: clamp(46px, 15vw, 58px);
+  font-size: clamp(40px, 13vw, 52px);
   font-weight: 700;
   color: var(--accent);
 }
 
 .readout--distance {
-  font-size: clamp(26px, 9vw, 32px);
+  font-size: clamp(24px, 7.5vw, 30px);
   font-weight: 600;
   color: var(--text);
 }
@@ -309,20 +301,11 @@ select:focus-visible,
   color: #3a3e45;
 }
 
-.result__sub {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 10px 0 2px;
-}
-
 .result__hint {
-  margin: 10px 0 0;
+  margin: 7px 0 0;
   font-size: 12px;
   color: var(--muted);
-  min-height: 1em;
+  min-height: 1.2em;
 }
 
 .result__hint--ok {
@@ -332,8 +315,11 @@ select:focus-visible,
 /* ---------- historique ---------- */
 
 .history {
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 9px 10px 10px;
 }
 
 .history__list {
@@ -343,6 +329,23 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #33373e transparent;
+}
+
+.history__list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.history__list::-webkit-scrollbar-thumb {
+  background: #33373e;
+  border-radius: 3px;
 }
 
 .history__row {
@@ -350,7 +353,7 @@ select:focus-visible,
   align-items: baseline;
   gap: 10px;
   width: 100%;
-  padding: 9px 10px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--panel);
@@ -386,36 +389,42 @@ select:focus-visible,
   margin: 0;
 }
 
-/* ---------- reglages ---------- */
+/* ---------- panneau de reglages ---------- */
 
-.settings {
-  border-bottom: 1px solid var(--border);
-}
-
-.settings > summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.settings > summary::-webkit-details-marker {
-  display: none;
-}
-
-.settings > summary:hover {
-  color: var(--text);
-}
-
-.settings__body {
-  padding: 0 12px 12px;
+/* Recouvre la carte au lieu de pousser le contenu vers le bas : c'est ce qui
+   obligeait a defiler pour atteindre les reglages. */
+.sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+}
+
+.sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  scrollbar-width: thin;
+  scrollbar-color: #33373e transparent;
+}
+
+.sheet__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sheet__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sheet__body::-webkit-scrollbar-thumb {
+  background: #33373e;
+  border-radius: 3px;
 }
 
 .setting {
@@ -434,6 +443,12 @@ select:focus-visible,
   font-size: 11px;
   color: var(--muted);
   line-height: 1.45;
+  margin: 0;
+}
+
+.setting code {
+  font-family: var(--mono);
+  color: var(--text);
 }
 
 .setting input[type="text"],
@@ -453,8 +468,15 @@ select:focus-visible,
   accent-color: var(--accent);
 }
 
+.setting .icon-btn {
+  align-self: flex-start;
+  border-color: var(--border);
+}
+
 .footer {
-  padding: 10px 12px;
+  padding: 8px 10px;
+  margin: 0;
+  border-top: 1px solid var(--border);
   font-size: 11px;
   color: var(--muted);
   text-align: center;

@@ -4,8 +4,8 @@ import { solve, type Solution } from './core/ballistics';
 import { parseCoord } from './core/parse';
 import {
   DEFAULT_SETTINGS,
-  HISTORY_LIMIT,
   STORAGE_KEYS,
+  pushTarget,
   type HistoryEntry,
   type Settings,
 } from './core/settings';
@@ -31,6 +31,8 @@ export default function App() {
   const [target, setTarget] = useState<CoordFields>(EMPTY_FIELDS);
   const [history, setHistory] = useLocalStorage<HistoryEntry[]>(STORAGE_KEYS.history, []);
   const [hotkeyError, setHotkeyError] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [flash, setFlash] = useState<string | null>(null);
 
   const targetXRef = useRef<HTMLInputElement>(null);
 
@@ -48,17 +50,42 @@ export default function App() {
     const ty = parseCoord(target.y);
     if (!solution || tx === null || ty === null) return;
     setHistory((previous) =>
-      [
-        { id: newId(), x: tx, y: ty, azimuth: solution.azimuth, distance: solution.distance },
-        ...previous.filter((entry) => entry.x !== tx || entry.y !== ty),
-      ].slice(0, HISTORY_LIMIT),
+      pushTarget(previous, {
+        id: newId(),
+        x: tx,
+        y: ty,
+        azimuth: solution.azimuth,
+        distance: solution.distance,
+      }),
     );
+    setFlash('Cible mémorisée');
   }, [solution, target, setHistory]);
+
+  useEffect(() => {
+    if (flash === null) return;
+    const timer = window.setTimeout(() => setFlash(null), 1400);
+    return () => window.clearTimeout(timer);
+  }, [flash]);
 
   const patchSettings = useCallback(
     (patch: Partial<Settings>) => setSettings((previous) => ({ ...previous, ...patch })),
     [setSettings],
   );
+
+  // Entree memorise depuis n'importe ou, pas seulement depuis un champ : en pleine
+  // partie on n'a pas forcement le curseur dans un input.
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Enter' || event.repeat) return;
+      const element = event.target as HTMLElement | null;
+      // Les boutons et le panneau de reglages gardent leur comportement natif.
+      if (element?.tagName === 'BUTTON' || element?.closest('.sheet')) return;
+      event.preventDefault();
+      memorize();
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [memorize]);
 
   // ---- integration overlay Electron ------------------------------------------
 
@@ -71,6 +98,7 @@ export default function App() {
     // A chaque ouverture par le raccourci global : curseur pret sur la cible.
     return bridge.onShown(() => {
       setTarget(EMPTY_FIELDS);
+      setSettingsOpen(false);
       window.requestAnimationFrame(() => targetXRef.current?.focus());
     });
   }, []);
@@ -78,7 +106,13 @@ export default function App() {
   useEffect(() => {
     if (!bridge) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') bridge?.hide();
+      if (event.key !== 'Escape') return;
+      // Echap ferme d'abord les reglages, puis seulement l'overlay.
+      setSettingsOpen((open) => {
+        if (open) return false;
+        bridge?.hide();
+        return open;
+      });
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
@@ -115,6 +149,14 @@ export default function App() {
       <header className="titlebar">
         <span className="titlebar__mark" aria-hidden="true" />
         <h1 className="titlebar__title">Wardogs · Mortier</h1>
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={() => setSettingsOpen(true)}
+          title="Réglages et calibration"
+        >
+          ⚙
+        </button>
         {isElectron && (
           <button
             type="button"
@@ -127,68 +169,55 @@ export default function App() {
         )}
       </header>
 
-      <PointBlock
-        idPrefix="origin"
-        title="Ma position"
-        value={origin}
-        onChange={setOrigin}
-        onEnter={memorize}
-        action={
-          (origin.x || origin.y) && (
-            <button
-              type="button"
-              className="icon-btn"
-              title="Effacer ma position"
-              onClick={() => setOrigin(EMPTY_FIELDS)}
-            >
-              Effacer
-            </button>
-          )
-        }
-      />
+      <div className="app__body">
+        <PointBlock
+          idPrefix="origin"
+          title="Ma position"
+          value={origin}
+          onChange={setOrigin}
+          action={
+            (origin.x || origin.y) && (
+              <button
+                type="button"
+                className="icon-btn"
+                title="Effacer ma position"
+                onClick={() => setOrigin(EMPTY_FIELDS)}
+              >
+                Effacer
+              </button>
+            )
+          }
+        />
 
-      <PointBlock
-        idPrefix="target"
-        title="Cible"
-        value={target}
-        onChange={setTarget}
-        onEnter={memorize}
-        xRef={targetXRef}
-        action={
-          (target.x || target.y) && (
-            <button
-              type="button"
-              className="icon-btn"
-              title="Effacer la cible"
-              onClick={() => setTarget(EMPTY_FIELDS)}
-            >
-              Effacer
-            </button>
-          )
-        }
-      />
+        <PointBlock
+          idPrefix="target"
+          title="Cible"
+          value={target}
+          onChange={setTarget}
+          xRef={targetXRef}
+          action={
+            (target.x || target.y) && (
+              <button
+                type="button"
+                className="icon-btn"
+                title="Effacer la cible"
+                onClick={() => setTarget(EMPTY_FIELDS)}
+              >
+                Effacer
+              </button>
+            )
+          }
+        />
 
-      <ResultPanel
-        solution={solution}
-        settings={settings}
-        onUnitChange={(angleUnit) => patchSettings({ angleUnit })}
-        hint={hint}
-      />
+        <ResultPanel solution={solution} settings={settings} flash={flash} hint={hint} />
 
-      <TargetHistory
-        entries={history}
-        settings={settings}
-        onSelect={(entry) => setTarget({ x: String(entry.x), y: String(entry.y) })}
-        onClear={() => setHistory([])}
-      />
-
-      <SettingsPanel
-        settings={settings}
-        onChange={patchSettings}
-        onReset={resetSettings}
-        showOverlayOptions={isElectron}
-        hotkeyError={hotkeyError}
-      />
+        <TargetHistory
+          entries={history}
+          settings={settings}
+          onSelect={(entry) => setTarget({ x: String(entry.x), y: String(entry.y) })}
+          onClear={() => setHistory([])}
+        />
+      </div>
 
       <p className="footer">
         {isElectron ? (
@@ -199,6 +228,17 @@ export default function App() {
           <>Azimut 0° = Nord, rotation horaire.</>
         )}
       </p>
+
+      {settingsOpen && (
+        <SettingsPanel
+          settings={settings}
+          onChange={patchSettings}
+          onReset={resetSettings}
+          onClose={() => setSettingsOpen(false)}
+          showOverlayOptions={isElectron}
+          hotkeyError={hotkeyError}
+        />
+      )}
     </div>
   );
 }

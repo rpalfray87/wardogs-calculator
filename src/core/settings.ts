@@ -37,3 +37,19 @@ export interface HistoryEntry {
 }
 
 export const HISTORY_LIMIT = 5;
+
+/**
+ * Ajoute une cible en tete d'historique.
+ *
+ * Deux garde-fous : marteler Entree sur la meme cible ne cree pas cinquante
+ * lignes (elle est deja en tete, on ne touche a rien), et re-tirer sur une
+ * cible plus ancienne la remonte au lieu de la dupliquer.
+ */
+export function pushTarget(history: HistoryEntry[], entry: HistoryEntry): HistoryEntry[] {
+  const [first] = history;
+  if (first && first.x === entry.x && first.y === entry.y) return history;
+  return [entry, ...history.filter((e) => e.x !== entry.x || e.y !== entry.y)].slice(
+    0,
+    HISTORY_LIMIT,
+  );
+}

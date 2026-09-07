@@ -14,10 +14,8 @@ interface PointBlockProps {
   title: string;
   value: CoordFields;
   onChange: (next: CoordFields) => void;
-  onEnter?: () => void;
   action?: ReactNode;
   xRef?: RefObject<HTMLInputElement>;
-  yRef?: RefObject<HTMLInputElement>;
 }
 
 export function PointBlock({
@@ -25,10 +23,8 @@ export function PointBlock({
   title,
   value,
   onChange,
-  onEnter,
   action,
   xRef,
-  yRef,
 }: PointBlockProps) {
   function fillFromPair(pair: Point) {
     onChange({ x: String(pair.x), y: String(pair.y) });
@@ -43,21 +39,20 @@ export function PointBlock({
       <div className="block__grid">
         <CoordInput
           id={`${idPrefix}-x`}
-          label="X"
+          axis="X"
+          fullLabel={`${title} X`}
           value={value.x}
           onChange={(x) => onChange({ ...value, x })}
           onPastePair={fillFromPair}
-          onEnter={onEnter}
           inputRef={xRef}
         />
         <CoordInput
           id={`${idPrefix}-y`}
-          label="Y"
+          axis="Y"
+          fullLabel={`${title} Y`}
           value={value.y}
           onChange={(y) => onChange({ ...value, y })}
           onPastePair={fillFromPair}
-          onEnter={onEnter}
-          inputRef={yRef}
         />
       </div>
     </section>

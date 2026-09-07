@@ -1,10 +1,11 @@
-import type { MilStandard, YAxis } from '../core/ballistics';
+import type { AngleUnit, MilStandard, YAxis } from '../core/ballistics';
 import type { Settings } from '../core/settings';
 
 interface SettingsPanelProps {
   settings: Settings;
   onChange: (patch: Partial<Settings>) => void;
   onReset: () => void;
+  onClose: () => void;
   showOverlayOptions: boolean;
   hotkeyError: string | null;
 }
@@ -13,13 +14,21 @@ export function SettingsPanel({
   settings,
   onChange,
   onReset,
+  onClose,
   showOverlayOptions,
   hotkeyError,
 }: SettingsPanelProps) {
   return (
-    <details className="settings">
-      <summary>Réglages · calibration</summary>
-      <div className="settings__body">
+    <div className="sheet" role="dialog" aria-label="Réglages et calibration">
+      <header className="titlebar">
+        <span className="titlebar__mark" aria-hidden="true" />
+        <h2 className="titlebar__title">Réglages · calibration</h2>
+        <button type="button" className="icon-btn" onClick={onClose} title="Fermer">
+          ✕
+        </button>
+      </header>
+
+      <div className="sheet__body">
         <div className="setting">
           <label className="setting__label" htmlFor="set-scale">
             Mètres par point de coordonnée
@@ -54,29 +63,45 @@ export function SettingsPanel({
             <option value="north-down">Y augmente vers le Sud</option>
           </select>
           <p className="setting__help">
-            À vérifier en jeu : si l'azimut affiché est décalé de 180°, c'est ce réglage
-            qu'il faut basculer.
+            Si l'azimut affiché est décalé de 180° en jeu, c'est ce réglage qu'il faut basculer.
           </p>
         </div>
 
         <div className="setting">
-          <label className="setting__label" htmlFor="set-mil">
-            Standard des millièmes
+          <label className="setting__label" htmlFor="set-unit">
+            Unité de l'azimut
           </label>
           <select
-            id="set-mil"
-            value={settings.milStandard}
-            onChange={(event) =>
-              onChange({ milStandard: Number(event.target.value) as MilStandard })
-            }
+            id="set-unit"
+            value={settings.angleUnit}
+            onChange={(event) => onChange({ angleUnit: event.target.value as AngleUnit })}
           >
-            <option value={6400}>6400 — OTAN</option>
-            <option value={6000}>6000 — ex-Pacte de Varsovie</option>
+            <option value="deg">Degrés (0-360)</option>
+            <option value="mil">Millièmes</option>
           </select>
           <p className="setting__help">
-            Si la boussole du mortier est graduée jusqu'à 6000 et non 6400, changer ici.
+            À laisser en degrés tant que la boussole du jeu n'a pas été vérifiée. Les millièmes
+            du viseur servent à l'élévation du tube, pas à la direction.
           </p>
         </div>
+
+        {settings.angleUnit === 'mil' && (
+          <div className="setting">
+            <label className="setting__label" htmlFor="set-mil">
+              Standard des millièmes
+            </label>
+            <select
+              id="set-mil"
+              value={settings.milStandard}
+              onChange={(event) =>
+                onChange({ milStandard: Number(event.target.value) as MilStandard })
+              }
+            >
+              <option value={6400}>6400 — OTAN</option>
+              <option value={6000}>6000 — ex-Pacte de Varsovie</option>
+            </select>
+          </div>
+        )}
 
         {showOverlayOptions && (
           <>
@@ -125,6 +150,6 @@ export function SettingsPanel({
           </button>
         </div>
       </div>
-    </details>
+    </div>
   );
 }

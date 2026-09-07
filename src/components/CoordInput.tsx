@@ -1,25 +1,27 @@
-import type { ClipboardEvent, KeyboardEvent, RefObject } from 'react';
+import type { ClipboardEvent, RefObject } from 'react';
 import type { Point } from '../core/ballistics';
 import { isBlank, parseCoord, parsePair } from '../core/parse';
 
 interface CoordInputProps {
   id: string;
-  label: string;
+  /** Affiche en pastille dans le champ : gagne la hauteur d'une ligne de label. */
+  axis: 'X' | 'Y';
+  /** Nom complet lu par les lecteurs d'ecran, ex. "Cible X". */
+  fullLabel: string;
   value: string;
   onChange: (value: string) => void;
-  /** Appele quand on colle une paire "X Y" : permet de remplir les deux champs. */
+  /** Appele quand on colle une paire "X Y" : remplit les deux champs d'un coup. */
   onPastePair?: (pair: Point) => void;
-  onEnter?: () => void;
   inputRef?: RefObject<HTMLInputElement>;
 }
 
 export function CoordInput({
   id,
-  label,
+  axis,
+  fullLabel,
   value,
   onChange,
   onPastePair,
-  onEnter,
   inputRef,
 }: CoordInputProps) {
   const invalid = !isBlank(value) && parseCoord(value) === null;
@@ -32,18 +34,11 @@ export function CoordInput({
     onPastePair(pair);
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter' && onEnter) {
-      event.preventDefault();
-      onEnter();
-    }
-  }
-
   return (
     <div className="field">
-      <label className="field__label" htmlFor={id}>
-        {label}
-      </label>
+      <span className="field__tag" aria-hidden="true">
+        {axis}
+      </span>
       <input
         id={id}
         ref={inputRef}
@@ -54,12 +49,11 @@ export function CoordInput({
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
-        placeholder="—"
+        aria-label={fullLabel}
         aria-invalid={invalid}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         onPaste={handlePaste}
-        onKeyDown={handleKeyDown}
         onFocus={(event) => event.target.select()}
       />
     </div>

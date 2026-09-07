@@ -26,14 +26,14 @@ et vivent dans les réglages, pas dans le code :
 |---|---|---|
 | Mètres par point | 100 (10 points = 1000 m) | la distance est proportionnellement fausse |
 | Sens de l'axe Y | Y augmente vers le Nord | l'azimut est décalé de 180° |
-| Standard des millièmes | 6400 (OTAN) | la boussole du mortier est graduée jusqu'à 6000 |
+| Unité de l'azimut | Degrés | la boussole du jeu s'avère graduée en millièmes (choisir alors 6400 ou 6000) |
 
 ### Procédure de calibration, le jour de la sortie
 
 1. Poser le mortier, relever ses coordonnées, viser un point dont on connaît les coordonnées.
 2. Comparer l'azimut de l'app à celui de la boussole en jeu.
    - Écart de 180° → basculer **Sens de l'axe Y**.
-   - Écart d'environ 6 % en millièmes → changer le **standard des millièmes**.
+   - La boussole n'est pas graduée en degrés → changer **Unité de l'azimut**.
 3. Comparer la distance annoncée à la portée réelle → ajuster **Mètres par point**.
 
 Aucune recompilation n'est nécessaire : tout est persisté dans le navigateur / l'app.
@@ -49,9 +49,19 @@ Coller `131.33 45.6` (ou `131.33;45.6`, `131.33/45.6`) dans le champ X remplit X
 | Touche | Effet |
 |---|---|
 | `Tab` | champ suivant |
-| `Entrée` | mémorise la cible dans l'historique |
+| `Entrée` | mémorise la cible depuis n'importe où dans l'app, sans avoir le curseur dans un champ ; marteler la touche ne crée pas de doublon |
 | `Échap` | masque l'overlay et rend le focus au jeu (PC) |
 | clic sur un chiffre | copie la valeur |
+
+## Millièmes et élévation
+
+Le viseur du jeu porte deux échelles couplées : la **portée en mètres** à gauche et
+l'**élévation en millièmes** à droite (par exemple 110 M en face de 900 mil). Les millièmes
+concernent donc l'inclinaison du tube, pas la direction.
+
+L'app donne la portée en mètres, qui se lit directement sur l'échelle de gauche du viseur :
+c'est le viseur lui-même qui fait la correspondance vers les millièmes. L'unité de l'azimut
+reste réglable au cas où la boussole du jeu serait, elle aussi, graduée en millièmes.
 
 ## Développement
 

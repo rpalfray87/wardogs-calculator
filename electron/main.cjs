@@ -15,7 +15,7 @@ const IS_DEV = process.env.ELECTRON_DEV === '1';
 const DEV_URL = 'http://localhost:5173';
 const DEFAULT_HOTKEY = 'Alt+M';
 const WIDTH = 420;
-const HEIGHT = 680;
+const HEIGHT = 640;
 
 let win = null;
 let tray = null;
