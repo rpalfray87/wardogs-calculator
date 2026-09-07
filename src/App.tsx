@@ -14,6 +14,7 @@ import { EMPTY_FIELDS, PointBlock, type CoordFields } from './components/PointBl
 import { ResultPanel } from './components/ResultPanel';
 import { SettingsPanel } from './components/SettingsPanel';
 import { TargetHistory } from './components/TargetHistory';
+import { IconClose, IconSettings } from './components/icons';
 
 function newId(): string {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -154,17 +155,19 @@ export default function App() {
           className="icon-btn"
           onClick={() => setSettingsOpen(true)}
           title="Réglages et calibration"
+          aria-label="Réglages et calibration"
         >
-          ⚙
+          <IconSettings />
         </button>
         {isElectron && (
           <button
             type="button"
             className="icon-btn"
             title="Masquer l'overlay (Échap)"
+            aria-label="Masquer l'overlay"
             onClick={() => bridge?.hide()}
           >
-            ✕
+            <IconClose />
           </button>
         )}
       </header>
@@ -215,6 +218,7 @@ export default function App() {
           entries={history}
           settings={settings}
           onSelect={(entry) => setTarget({ x: String(entry.x), y: String(entry.y) })}
+          onDelete={(id) => setHistory((previous) => previous.filter((e) => e.id !== id))}
           onClear={() => setHistory([])}
         />
       </div>

@@ -1,5 +1,6 @@
 import type { AngleUnit, MilStandard, YAxis } from '../core/ballistics';
 import type { Settings } from '../core/settings';
+import { IconBack } from './icons';
 
 interface SettingsPanelProps {
   settings: Settings;
@@ -21,11 +22,16 @@ export function SettingsPanel({
   return (
     <div className="sheet" role="dialog" aria-label="Réglages et calibration">
       <header className="titlebar">
-        <span className="titlebar__mark" aria-hidden="true" />
-        <h2 className="titlebar__title">Réglages · calibration</h2>
-        <button type="button" className="icon-btn" onClick={onClose} title="Fermer">
-          ✕
+        <button
+          type="button"
+          className="icon-btn icon-btn--back"
+          onClick={onClose}
+          title="Retour au calculateur"
+          aria-label="Retour au calculateur"
+        >
+          <IconBack />
         </button>
+        <h2 className="titlebar__title">Réglages · calibration</h2>
       </header>
 
       <div className="sheet__body">
