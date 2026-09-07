@@ -59,6 +59,15 @@ body[data-electron="true"] #root {
   }
 }
 
+/* Sur telephone la carte occupe tout l'ecran : pas de bordure flottante.
+   L'overlay Electron fait 420 px de large mais garde ses coins arrondis. */
+@media (max-width: 459px) {
+  body:not([data-electron="true"]) .app {
+    border: none;
+    border-radius: 0;
+  }
+}
+
 /* ---------- barre de titre ---------- */
 
 .titlebar {

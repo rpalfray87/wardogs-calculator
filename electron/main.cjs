@@ -119,11 +119,24 @@ function createWindow() {
   });
 }
 
+function notifyShown() {
+  if (!win || win.isDestroyed()) return;
+  // Au tout premier affichage le renderer n'ecoute pas encore : on attend son chargement,
+  // sinon le curseur n'atterrit pas dans le champ cible au lancement.
+  if (win.webContents.isLoading()) {
+    win.webContents.once('did-finish-load', () => {
+      if (win && !win.isDestroyed()) win.webContents.send('overlay:shown');
+    });
+  } else {
+    win.webContents.send('overlay:shown');
+  }
+}
+
 function showOverlay() {
   if (!win || win.isDestroyed()) return;
   win.show();
   win.focus();
-  win.webContents.send('overlay:shown');
+  notifyShown();
 }
 
 function hideOverlay() {
