@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-ssr/
+release/
+dev-dist/
+*.local
+.DS_Store
+.vite/
