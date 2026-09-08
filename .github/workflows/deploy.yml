@@ -18,9 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -31,17 +31,13 @@ jobs:
 
       - name: Build
         # La base est deduite du nom du depot : renommer le repo ne casse pas les chemins.
+        # C'est aussi pourquoi configure-pages est absent : on n'a besoin d'aucune de ses
+        # sorties, et il faisait echouer tout le build tant que Pages n'etait pas active.
         run: npm run build
         env:
           PAGES_BASE: /${{ github.event.repository.name }}/
 
-      - uses: actions/configure-pages@v5
-        with:
-          # Active Pages sur le depot au premier passage, au lieu d'exiger
-          # un aller-retour manuel dans Settings > Pages.
-          enablement: true
-
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -53,4 +49,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
