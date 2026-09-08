@@ -61,28 +61,35 @@ export function toDisplayAngle(degrees: number, s: AngleSettings): DisplayAngle 
   return { value: degrees, decimals: 1, suffix: '°' };
 }
 
-const numberFormats = new Map<number, Intl.NumberFormat>();
+const numberFormats = new Map<string, Intl.NumberFormat>();
 
-function formatFr(value: number, decimals: number): string {
-  let fmt = numberFormats.get(decimals);
+function formatNumber(value: number, decimals: number, locale: string): string {
+  const cacheKey = `${locale}:${decimals}`;
+  let fmt = numberFormats.get(cacheKey);
   if (!fmt) {
-    fmt = new Intl.NumberFormat('fr-FR', {
+    fmt = new Intl.NumberFormat(locale, {
+      // Chiffres latins imposes : en arabe ou en bengali, Intl passerait sinon
+      // aux chiffres locaux, illisibles a recopier dans le jeu.
+      numberingSystem: 'latn',
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     });
-    numberFormats.set(decimals, fmt);
+    numberFormats.set(cacheKey, fmt);
   }
   // Intl insere une espace insecable etroite : on la remplace par une insecable
   // simple, plus lisible en fonte monospace.
   return fmt.format(value).replace(/ /g, ' ');
 }
 
-export function formatAngle(a: DisplayAngle): string {
-  // Point decimal et non virgule : coherent avec la facon dont on saisit les
-  // coordonnees, et sans ambiguite quand on recopie la valeur.
-  return a.decimals === 0 ? formatFr(a.value, 0) : a.value.toFixed(a.decimals);
+/** Locale par defaut : l'interface demarre en anglais. */
+const DEFAULT_LOCALE = 'en-US';
+
+export function formatAngle(a: DisplayAngle, locale: string = DEFAULT_LOCALE): string {
+  // Point decimal et non separateur localise pour les decimales : coherent avec
+  // la facon dont on saisit les coordonnees, et sans ambiguite a la recopie.
+  return a.decimals === 0 ? formatNumber(a.value, 0, locale) : a.value.toFixed(a.decimals);
 }
 
-export function formatDistance(meters: number): string {
-  return formatFr(Math.round(meters), 0);
+export function formatDistance(meters: number, locale: string = DEFAULT_LOCALE): string {
+  return formatNumber(Math.round(meters), 0, locale);
 }

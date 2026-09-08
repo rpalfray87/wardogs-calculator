@@ -1,6 +1,9 @@
 import type { AngleUnit, MilStandard, YAxis } from './ballistics';
+import { DEFAULT_LANGUAGE, type Language } from '../i18n/languages';
 
 export interface Settings {
+  /** Langue de l'interface. L'anglais est la valeur par defaut. */
+  language: Language;
   /** Metres par point de coordonnee. Hypothese de depart : 10 points = 1000 m. */
   metersPerUnit: number;
   yAxis: YAxis;
@@ -13,6 +16,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  language: DEFAULT_LANGUAGE,
   metersPerUnit: 100,
   yAxis: 'north-up',
   angleUnit: 'deg',

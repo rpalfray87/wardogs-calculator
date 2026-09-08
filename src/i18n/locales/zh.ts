@@ -1,0 +1,60 @@
+import type { Dict } from '../dict';
+
+export const zh: Dict = {
+  'titlebar.settings': '设置与校准',
+  'titlebar.hide': '隐藏悬浮窗（Esc）',
+  'titlebar.back': '返回计算器',
+  'settings.title': '设置 · 校准',
+
+  'key.enter': 'Enter',
+  'key.esc': 'Esc',
+
+  'point.origin': '我的位置',
+  'point.target': '目标',
+  'point.clear': '清除',
+  'point.clearOrigin': '清除我的位置',
+  'point.clearTarget': '清除目标',
+
+  'result.azimuth': '方位角',
+  'result.distance': '距离',
+  'result.copyTitle': '点击复制',
+  'result.copied': '已复制{label}',
+  'result.copyFailed': '复制失败',
+  'result.saved': '目标已记录',
+  'hint.ready': 'Enter 记录目标 · 点击数字即可复制',
+  'hint.incomplete': '请填写全部四个坐标。',
+
+  'history.title': '历史记录',
+  'history.clearAction': '清空',
+  'history.clearTitle': '清空历史记录',
+  'history.empty': '{key} 可记录当前目标。',
+  'history.load': '重新载入该目标',
+  'history.delete': '删除该目标',
+  'history.deleteAria': '删除目标 {label}',
+
+  'footer.overlay': '{hotkey} 显示 / 隐藏 · {esc} 将控制权交回游戏',
+  'footer.web': '方位角 0° = 正北，顺时针。',
+
+  'set.language.label': '语言',
+  'set.language.help': '界面语言，默认英语。',
+  'set.scale.label': '每坐标点对应的米数',
+  'set.scale.help':
+    '初始假设：10 点 = 1000 米，即每点 100 米。若游戏中显示的距离按比例偏差，就在此处修正。',
+  'set.yaxis.label': 'Y 轴方向',
+  'set.yaxis.up': 'Y 向北增大',
+  'set.yaxis.down': 'Y 向南增大',
+  'set.yaxis.help': '如果游戏中显示的方位角相差 180°，需要切换的就是这一项。',
+  'set.unit.label': '方位角单位',
+  'set.unit.deg': '度（0-360）',
+  'set.unit.mil': '密位',
+  'set.unit.help': '在游戏罗盘尚未验证之前请保持为度。瞄具上的密位用于炮管仰角，而非方向。',
+  'set.mil.label': '密位标准',
+  'set.mil.nato': '6400 — 北约',
+  'set.mil.warsaw': '6000 — 前华约',
+  'set.hotkey.label': '全局快捷键',
+  'set.hotkey.help': 'Electron 语法：Alt+M、Ctrl+Shift+A、F8。用于显示和隐藏悬浮窗。',
+  'set.hotkey.error': '快捷键“{key}”被拒绝或已被占用。',
+  'set.hotkey.errorGeneric': '快捷键无法应用。',
+  'set.opacity.label': '悬浮窗不透明度 — {percent} %',
+  'set.reset': '重置设置',
+};

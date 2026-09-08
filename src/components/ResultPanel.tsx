@@ -7,6 +7,7 @@ import {
   type Solution,
 } from '../core/ballistics';
 import { copyText } from '../core/clipboard';
+import { useI18n } from '../i18n';
 
 interface ResultPanelProps {
   solution: Solution | null;
@@ -17,6 +18,7 @@ interface ResultPanelProps {
 }
 
 export function ResultPanel({ solution, settings, flash, hint }: ResultPanelProps) {
+  const { t, locale } = useI18n();
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,34 +32,41 @@ export function ResultPanel({ solution, settings, flash, hint }: ResultPanelProp
 
   async function copy(label: string, value: string) {
     const ok = await copyText(value);
-    setCopied(ok ? `${label} copié` : 'copie impossible');
+    setCopied(ok ? t('result.copied', { label }) : t('result.copyFailed'));
   }
 
   return (
     <section className="result">
-      <h2 className="result__label">Azimut</h2>
+      <h2 className="result__label">{t('result.azimuth')}</h2>
 
       <button
         type="button"
         className={`readout readout--azimuth${angle ? '' : ' readout--empty'}`}
-        title="Cliquer pour copier"
+        title={t('result.copyTitle')}
         disabled={!angle}
-        onClick={() => angle && copy('Azimut', formatAngle(angle).replace(/[   ]/g, ''))}
+        onClick={() =>
+          angle &&
+          // On copie la valeur brute : le separateur de milliers ne doit pas
+          // partir dans le presse-papiers.
+          copy(t('result.azimuth'), formatAngle(angle, locale).replace(/[\s  ]/g, ''))
+        }
       >
-        {angle ? formatAngle(angle) : '—'}
+        {angle ? formatAngle(angle, locale) : '—'}
         {angle && <span className="readout__unit">{angle.suffix}</span>}
       </button>
 
-      <h2 className="result__label result__label--sub">Distance</h2>
+      <h2 className="result__label result__label--sub">{t('result.distance')}</h2>
 
       <button
         type="button"
         className={`readout readout--distance${solution ? '' : ' readout--empty'}`}
-        title="Cliquer pour copier"
+        title={t('result.copyTitle')}
         disabled={!solution}
-        onClick={() => solution && copy('Distance', String(Math.round(solution.distance)))}
+        onClick={() =>
+          solution && copy(t('result.distance'), String(Math.round(solution.distance)))
+        }
       >
-        {solution ? formatDistance(solution.distance) : '—'}
+        {solution ? formatDistance(solution.distance, locale) : '—'}
         {solution && <span className="readout__unit">m</span>}
       </button>
 
