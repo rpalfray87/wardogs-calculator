@@ -1,5 +1,5 @@
-// Icones en SVG plutot qu'en caracteres : rendu identique partout, epaisseur de
-// trait coherente et couleur pilotee par currentColor.
+// SVG icons rather than characters: identical rendering everywhere, consistent
+// stroke width, and colour driven by currentColor.
 
 interface IconProps {
   size?: number;

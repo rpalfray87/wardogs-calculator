@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Surface minimale exposee au renderer : pas de require, pas de fs, pas d'ipcRenderer brut.
+// Minimal surface exposed to the renderer: no require, no fs, no raw ipcRenderer.
 contextBridge.exposeInMainWorld('wardogs', {
   hide: () => ipcRenderer.send('overlay:hide'),
   quit: () => ipcRenderer.send('app:quit'),

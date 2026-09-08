@@ -4,13 +4,13 @@ import { isBlank, parseCoord, parsePair } from '../core/parse';
 
 interface CoordInputProps {
   id: string;
-  /** Affiche en pastille dans le champ : gagne la hauteur d'une ligne de label. */
+  /** Shown as a chip inside the field, which saves a whole label line. */
   axis: 'X' | 'Y';
-  /** Nom complet lu par les lecteurs d'ecran, ex. "Cible X". */
+  /** Full name announced by screen readers, e.g. "Target X". */
   fullLabel: string;
   value: string;
   onChange: (value: string) => void;
-  /** Appele quand on colle une paire "X Y" : remplit les deux champs d'un coup. */
+  /** Called when an "X Y" pair is pasted, so both fields fill at once. */
   onPastePair?: (pair: Point) => void;
   inputRef?: RefObject<HTMLInputElement>;
 }
@@ -42,8 +42,8 @@ export function CoordInput({
       <input
         id={id}
         ref={inputRef}
-        // type="text" et non "number" : les spinners, la molette et le rejet de la
-        // virgule par type=number rendent la saisie rapide penible.
+        // type="text" rather than "number": spinners, the scroll wheel and
+        // type=number rejecting commas all make fast entry painful.
         type="text"
         inputMode="decimal"
         autoComplete="off"

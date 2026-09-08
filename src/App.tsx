@@ -23,7 +23,7 @@ function newId(): string {
     : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/** Message differe : on stocke la cle, pas le texte, pour qu'il suive la langue. */
+/** Deferred message: we store the key, not the text, so it follows the language. */
 interface Message {
   key: TranslationKey;
   vars?: Vars;
@@ -49,7 +49,7 @@ interface CalculatorProps {
 
 function Calculator({ settings, setSettings }: CalculatorProps) {
   const { t } = useI18n();
-  // La position du mortier est persistee : on ne la retape pas entre deux tirs.
+  // The mortar position is persisted: no retyping it between two shots.
   const [origin, setOrigin] = useLocalStorage<CoordFields>(STORAGE_KEYS.origin, EMPTY_FIELDS);
   const [target, setTarget] = useState<CoordFields>(EMPTY_FIELDS);
   const [history, setHistory] = useLocalStorage<HistoryEntry[]>(STORAGE_KEYS.history, []);
@@ -95,20 +95,20 @@ function Calculator({ settings, setSettings }: CalculatorProps) {
     [setSettings],
   );
 
-  // Remise a zero : la langue survit. Sinon l'interface repasserait en anglais
-  // sous les yeux de quelqu'un qui ne le lit pas, sans moyen evident de revenir.
+  // Reset keeps the language. Otherwise the interface would flip back to
+  // English in front of someone who cannot read it, with no obvious way back.
   const resetSettings = useCallback(
     () => setSettings((previous) => ({ ...DEFAULT_SETTINGS, language: previous.language })),
     [setSettings],
   );
 
-  // Entree memorise depuis n'importe ou, pas seulement depuis un champ : en pleine
-  // partie on n'a pas forcement le curseur dans un input.
+  // Enter saves from anywhere, not just from a field: mid-game the caret is
+  // not necessarily sitting in an input.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== 'Enter' || event.repeat) return;
       const element = event.target as HTMLElement | null;
-      // Les boutons et le panneau de reglages gardent leur comportement natif.
+      // Buttons and the settings sheet keep their native behaviour.
       if (element?.tagName === 'BUTTON' || element?.closest('.sheet')) return;
       event.preventDefault();
       memorize();
@@ -117,7 +117,7 @@ function Calculator({ settings, setSettings }: CalculatorProps) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [memorize]);
 
-  // ---- integration overlay Electron ------------------------------------------
+  // ---- Electron overlay integration -------------------------------------------
 
   useEffect(() => {
     document.body.dataset.electron = String(isElectron);
@@ -125,7 +125,7 @@ function Calculator({ settings, setSettings }: CalculatorProps) {
 
   useEffect(() => {
     if (!bridge) return;
-    // A chaque ouverture par le raccourci global : curseur pret sur la cible.
+    // On every open via the global hotkey: caret ready on the target.
     return bridge.onShown(() => {
       setTarget(EMPTY_FIELDS);
       setSettingsOpen(false);
@@ -137,7 +137,7 @@ function Calculator({ settings, setSettings }: CalculatorProps) {
     if (!bridge) return;
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== 'Escape') return;
-      // Echap ferme d'abord les reglages, puis seulement l'overlay.
+      // Escape closes the settings first, and only then the overlay.
       setSettingsOpen((open) => {
         if (open) return false;
         bridge?.hide();
@@ -153,10 +153,10 @@ function Calculator({ settings, setSettings }: CalculatorProps) {
   }, [settings.opacity]);
 
   useEffect(() => {
-    // Capture locale : TS ne garde pas le narrowing de bridge dans le callback du timer.
+    // Local capture: TS does not keep the narrowing of bridge inside the timer callback.
     const api = bridge;
     if (!api) return;
-    // Debounce : le champ raccourci est edite caractere par caractere.
+    // Debounced: the hotkey field is edited one character at a time.
     const timer = window.setTimeout(() => {
       api
         .setHotkey(settings.hotkey)
@@ -276,8 +276,8 @@ function Calculator({ settings, setSettings }: CalculatorProps) {
 }
 
 /**
- * Pied de page de l'overlay. Les deux touches sont habillees en <kbd>, donc on
- * decoupe le gabarit traduit autour de ses marqueurs au lieu d'injecter du HTML.
+ * Overlay footer. Both keys are wrapped in <kbd>, so the translated template is
+ * split around its placeholders rather than injected as HTML.
  */
 function FooterHotkeys({ hotkey }: { hotkey: string }) {
   const { t } = useI18n();

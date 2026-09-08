@@ -3,12 +3,12 @@ import type { Point } from './ballistics';
 const NUMBER_RE = /^-?\d+(?:\.\d+)?$/;
 
 /**
- * Lit une coordonnee telle qu'affichee par le jeu.
+ * Reads a coordinate exactly as the game displays it.
  *
- * Regle absolue : on n'insere, ne deplace et ne devine JAMAIS une virgule.
- * Le nombre de chiffres est variable (131.33, 45.6, 1234) donc tout formatage
- * automatique produirait des coordonnees fausses. On accepte simplement le point
- * ou la virgule comme separateur decimal, et on refuse le reste.
+ * Hard rule: NEVER insert, move or guess a decimal separator. Coordinates vary
+ * in length (131.33, 45.6, 1234), so any automatic formatting would produce
+ * wrong coordinates. We simply accept a dot or a comma as the decimal mark and
+ * reject everything else.
  */
 export function parseCoord(raw: string): number | null {
   const text = raw.trim().replace(',', '.');
@@ -17,15 +17,15 @@ export function parseCoord(raw: string): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-/** true si le champ est vide (ni valide ni en erreur : juste pas encore rempli). */
+/** True when the field is empty: neither valid nor in error, just not filled yet. */
 export function isBlank(raw: string): boolean {
   return raw.trim() === '';
 }
 
 /**
- * Lit une paire "X Y" collee d'un coup. Sert au collage dans le champ X.
- * Separateurs acceptes : espace, point-virgule, slash. La virgule seule n'est
- * jamais un separateur de paire, elle est trop ambigue avec le separateur decimal.
+ * Reads an "X Y" pair pasted in one go, used when pasting into the X field.
+ * Accepted separators: space, semicolon, slash. A bare comma is never treated
+ * as a pair separator, being far too ambiguous with the decimal mark.
  */
 export function parsePair(raw: string): Point | null {
   const text = raw.trim().replace(/,\s/g, ' ');
@@ -33,8 +33,8 @@ export function parsePair(raw: string): Point | null {
 
   let parts = text.split(/[\s;/]+/).filter(Boolean);
 
-  // Cas "131.33,45.6" : les points sont deja les separateurs decimaux,
-  // donc la virgule restante ne peut etre que le separateur de paire.
+  // Case "131.33,45.6": the dots are already the decimal marks, so the
+  // remaining comma can only be the pair separator.
   if (parts.length === 1 && text.includes('.') && text.includes(',')) {
     parts = text.split(',').filter(Boolean);
   }

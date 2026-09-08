@@ -30,9 +30,10 @@ jobs:
       - run: npm test
 
       - name: Build
-        # La base est deduite du nom du depot : renommer le repo ne casse pas les chemins.
-        # C'est aussi pourquoi configure-pages est absent : on n'a besoin d'aucune de ses
-        # sorties, et il faisait echouer tout le build tant que Pages n'etait pas active.
+        # The base path is derived from the repository name, so renaming the
+        # repo does not break asset URLs. It is also why configure-pages is
+        # absent: none of its outputs are needed, and it failed the whole build
+        # until Pages had been enabled on the repository.
         run: npm run build
         env:
           PAGES_BASE: /${{ github.event.repository.name }}/

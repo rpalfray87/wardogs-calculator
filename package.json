@@ -2,7 +2,7 @@
   "name": "wardogs-calculator",
   "private": true,
   "version": "1.0.0",
-  "description": "Calculateur d'azimut et de distance pour le mortier / l'artillerie dans Wardogs.",
+  "description": "Azimuth and range calculator for mortar and artillery fire in Wardogs.",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {

@@ -48,8 +48,8 @@ export function SettingsPanel({
             onChange={(event) => onChange({ language: event.target.value as Language })}
           >
             {LANGUAGES.map((language) => (
-              // Chaque langue s'affiche dans sa propre graphie : on la reconnait
-              // meme quand l'interface est dans une langue qu'on ne lit pas.
+              // Each language is shown in its own script, so it stays
+              // recognisable even when the interface is in one you cannot read.
               <option key={language.code} value={language.code}>
                 {language.name}
               </option>

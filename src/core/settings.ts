@@ -2,16 +2,16 @@ import type { AngleUnit, MilStandard, YAxis } from './ballistics';
 import { DEFAULT_LANGUAGE, type Language } from '../i18n/languages';
 
 export interface Settings {
-  /** Langue de l'interface. L'anglais est la valeur par defaut. */
+  /** Interface language. English is the default. */
   language: Language;
-  /** Metres par point de coordonnee. Hypothese de depart : 10 points = 1000 m. */
+  /** Metres per coordinate point. Working assumption: 10 points = 1000 m. */
   metersPerUnit: number;
   yAxis: YAxis;
   angleUnit: AngleUnit;
   milStandard: MilStandard;
-  /** Accelerateur global Electron, syntaxe Electron ("Alt+M", "F8"...). */
+  /** Global accelerator, in Electron syntax ("Alt+M", "F8"...). */
   hotkey: string;
-  /** Opacite de l'overlay, 0.3 a 1. */
+  /** Overlay opacity, 0.3 to 1. */
   opacity: number;
 }
 
@@ -35,7 +35,7 @@ export interface HistoryEntry {
   id: string;
   x: number;
   y: number;
-  /** Azimut en degres, recalcule a l'affichage si les reglages changent. */
+  /** Azimuth in degrees, re-rendered if the display settings change. */
   azimuth: number;
   distance: number;
 }
@@ -43,11 +43,11 @@ export interface HistoryEntry {
 export const HISTORY_LIMIT = 5;
 
 /**
- * Ajoute une cible en tete d'historique.
+ * Adds a target at the top of the history.
  *
- * Deux garde-fous : marteler Entree sur la meme cible ne cree pas cinquante
- * lignes (elle est deja en tete, on ne touche a rien), et re-tirer sur une
- * cible plus ancienne la remonte au lieu de la dupliquer.
+ * Two safeguards: hammering Enter on the same target does not create fifty
+ * rows (it is already on top, so nothing changes), and firing again at an
+ * older target moves it back up instead of duplicating it.
  */
 export function pushTarget(history: HistoryEntry[], entry: HistoryEntry): HistoryEntry[] {
   const [first] = history;

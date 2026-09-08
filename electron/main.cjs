@@ -24,7 +24,7 @@ let quitting = false;
 
 const iconPath = path.join(__dirname, '..', 'build', 'icon.png');
 
-// ---------- persistance de la position et du raccourci ----------
+// ---------- window position and hotkey persistence ----------
 
 function statePath() {
   return path.join(app.getPath('userData'), 'window-state.json');
@@ -48,11 +48,11 @@ function saveState() {
   try {
     fs.writeFileSync(statePath(), JSON.stringify(state));
   } catch {
-    // dossier utilisateur en lecture seule : on continue sans persistance
+    // read-only user folder: carry on without persistence
   }
 }
 
-/** Position par defaut : en haut a droite de l'ecran principal, marge de 24 px. */
+/** Default position: top-right of the primary display, 24 px margin. */
 function defaultPosition() {
   const area = screen.getPrimaryDisplay().workArea;
   return {
@@ -61,14 +61,14 @@ function defaultPosition() {
   };
 }
 
-/** Verifie que la position sauvegardee tombe encore sur un ecran branche. */
+/** Checks the saved position still lands on a connected display. */
 function isOnScreen(x, y) {
   return screen.getAllDisplays().some(({ workArea: a }) => {
     return x >= a.x - WIDTH + 80 && x <= a.x + a.width - 80 && y >= a.y && y <= a.y + a.height - 60;
   });
 }
 
-// ---------- fenetre ----------
+// ---------- window ----------
 
 function createWindow() {
   const state = loadState();
@@ -88,8 +88,8 @@ function createWindow() {
     fullscreenable: false,
     skipTaskbar: true,
     show: false,
-    // Le niveau 'screen-saver' est celui qui passe au-dessus d'un jeu en fenetre
-    // sans bordure ; un alwaysOnTop simple se fait recouvrir.
+    // The 'screen-saver' level is the one that sits above a borderless
+    // windowed game; a plain alwaysOnTop gets covered.
     alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
@@ -111,7 +111,7 @@ function createWindow() {
 
   win.on('moved', saveState);
 
-  // Alt+F4 masque au lieu de quitter : on ne ferme que par le menu du tray.
+  // Alt+F4 hides instead of quitting: only the tray menu really closes it.
   win.on('close', (event) => {
     if (quitting) return;
     event.preventDefault();
@@ -121,8 +121,8 @@ function createWindow() {
 
 function notifyShown() {
   if (!win || win.isDestroyed()) return;
-  // Au tout premier affichage le renderer n'ecoute pas encore : on attend son chargement,
-  // sinon le curseur n'atterrit pas dans le champ cible au lancement.
+  // On the very first show the renderer is not listening yet, so wait for it
+  // to load, otherwise the caret never lands in the target field at startup.
   if (win.webContents.isLoading()) {
     win.webContents.once('did-finish-load', () => {
       if (win && !win.isDestroyed()) win.webContents.send('overlay:shown');
@@ -151,7 +151,7 @@ function toggleOverlay() {
   else showOverlay();
 }
 
-// ---------- raccourci global ----------
+// ---------- global hotkey ----------
 
 function registerHotkey(accelerator) {
   globalShortcut.unregisterAll();
@@ -163,7 +163,7 @@ function registerHotkey(accelerator) {
       return true;
     }
   } catch {
-    // accelerateur invalide : on retombe sur le precedent ci-dessous
+    // invalid accelerator: fall back to the previous one below
   }
 
   try {
@@ -176,7 +176,7 @@ function registerHotkey(accelerator) {
   return false;
 }
 
-// ---------- icone de notification ----------
+// ---------- tray icon ----------
 
 function refreshTrayMenu() {
   if (!tray) return;
@@ -227,7 +227,7 @@ ipcMain.handle('overlay:set-hotkey', (_event, accelerator) => {
   return { ok, accelerator: hotkey };
 });
 
-// ---------- cycle de vie ----------
+// ---------- lifecycle ----------
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -240,7 +240,7 @@ if (!app.requestSingleInstanceLock()) {
     createWindow();
     createTray();
     registerHotkey(hotkey);
-    // Premiere ouverture visible : sinon l'app semble ne pas s'etre lancee.
+    // Show on first launch, otherwise the app looks like it failed to start.
     showOverlay();
   });
 
@@ -248,6 +248,6 @@ if (!app.requestSingleInstanceLock()) {
     globalShortcut.unregisterAll();
   });
 
-  // L'app vit dans la zone de notification : fermer la fenetre ne la quitte pas.
+  // The app lives in the tray: closing the window does not quit it.
   app.on('window-all-closed', () => {});
 }

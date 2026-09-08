@@ -9,16 +9,16 @@ function placeholders(template: string): string[] {
   return (template.match(/\{\w+\}/g) ?? []).sort();
 }
 
-describe('dictionnaires', () => {
-  it('couvre les 20 langues', () => {
+describe('dictionaries', () => {
+  it('covers all 20 languages', () => {
     expect(Object.keys(DICTS)).toHaveLength(20);
     expect(Object.keys(DICTS).sort()).toEqual(LANGUAGES.map((l) => l.code).sort());
   });
 
   for (const { code, name } of LANGUAGES) {
-    // Les cles manquantes sont deja rejetees par le type Dict ; ce qui se glisse
-    // silencieusement, ce sont les {marqueurs} traduits par erreur.
-    it(`${name} (${code}) garde les memes marqueurs que l'anglais`, () => {
+    // Missing keys are already rejected by the Dict type. What slips through
+    // silently is a {placeholder} that got translated by mistake.
+    it(`${name} (${code}) keeps the same placeholders as English`, () => {
       for (const key of KEYS) {
         expect(placeholders(DICTS[code][key]), `${code} / ${key}`).toEqual(
           placeholders(en[key]),
@@ -29,18 +29,18 @@ describe('dictionnaires', () => {
 });
 
 describe('translate', () => {
-  it('substitue les variables', () => {
+  it('substitutes variables', () => {
     expect(translate('en', 'history.deleteAria', { label: '12 / 34' })).toBe(
       'Delete target 12 / 34',
     );
   });
 
-  it('laisse le marqueur en place si la variable manque', () => {
+  it('leaves the placeholder in place when the variable is missing', () => {
     expect(translate('en', 'history.deleteAria')).toContain('{label}');
   });
 
-  it("retombe sur l'anglais pour une langue inconnue", () => {
-    // @ts-expect-error langue volontairement hors liste
+  it('falls back to English for an unknown language', () => {
+    // @ts-expect-error language deliberately outside the list
     expect(translate('xx', 'result.distance')).toBe(en['result.distance']);
   });
 });

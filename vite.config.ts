@@ -2,9 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// Deux cibles de build depuis la meme base de code :
-//  - Electron charge les fichiers en file://  -> chemins relatifs, pas de service worker
-//  - GitHub Pages sert le site sous un sous-chemin -> base absolue
+// Two build targets from one codebase:
+//  - Electron loads files over file://  -> relative paths, no service worker
+//  - GitHub Pages serves the site under a sub-path -> absolute base
 const isElectron = process.env.BUILD_TARGET === 'electron';
 const repoBase = process.env.PAGES_BASE ?? '/Wardogs-calculator/';
 
@@ -21,7 +21,7 @@ export default defineConfig({
             manifest: {
               name: 'Wardogs Calculator',
               short_name: 'Wardogs',
-              description: "Azimut et distance pour le mortier dans Wardogs.",
+              description: 'Azimuth and range for mortar fire in Wardogs.',
               lang: 'fr',
               start_url: '.',
               scope: '.',

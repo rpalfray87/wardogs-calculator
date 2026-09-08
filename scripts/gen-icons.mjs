@@ -1,5 +1,5 @@
-// Genere les PNG de l'app sans dependance externe : encodeur PNG minimal + zlib.
-// Motif : reticule de tir jaune sur fond sombre, lisible jusqu'a 16 px.
+// Generates the app PNGs with no external dependency: a minimal PNG encoder
+// plus zlib. Motif: a yellow reticle on a dark ground, legible down to 16 px.
 import { deflateSync } from 'node:zlib';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -7,7 +7,7 @@ import { dirname } from 'node:path';
 const BG = [0x0e, 0x0f, 0x11];
 const ACCENT = [0xf5, 0xc5, 0x18];
 
-// ---------- encodeur PNG ----------
+// ---------- PNG encoder ----------
 
 const CRC_TABLE = (() => {
   const table = new Int32Array(256);
@@ -41,9 +41,9 @@ function encodePng(size, rgba) {
   ihdr.writeUInt32BE(size, 4);
   ihdr[8] = 8; // profondeur
   ihdr[9] = 6; // RGBA
-  // 10..12 : compression, filtre, entrelacement = 0
+  // 10..12: compression, filter, interlace = 0
 
-  // Une ligne = 1 octet de filtre (0 = aucun) + les pixels.
+  // One row = 1 filter byte (0 = none) followed by the pixels.
   const raw = Buffer.alloc(size * (size * 4 + 1));
   for (let y = 0; y < size; y += 1) {
     const rowStart = y * (size * 4 + 1);
@@ -59,17 +59,17 @@ function encodePng(size, rgba) {
   ]);
 }
 
-// ---------- dessin ----------
+// ---------- drawing ----------
 
 function roundedSquareCoverage(u, v, radius) {
-  // Distance signee a un carre plein aux coins arrondis, dans [0,1].
+  // Signed distance to a filled rounded square, in [0,1].
   const dx = Math.max(Math.abs(u - 0.5) - (0.5 - radius), 0);
   const dy = Math.max(Math.abs(v - 0.5) - (0.5 - radius), 0);
   return Math.hypot(dx, dy) <= radius ? 1 : 0;
 }
 
 function reticle(u, v, scale) {
-  // Ramene le point dans le repere du motif, puis teste les formes.
+  // Move the point into the motif frame, then test the shapes.
   const x = (u - 0.5) / scale;
   const y = (v - 0.5) / scale;
   const d = Math.hypot(x, y);
@@ -88,7 +88,7 @@ function reticle(u, v, scale) {
 
 function render(size, { maskable }) {
   const rgba = Buffer.alloc(size * size * 4);
-  const samples = 4; // supersampling : lisse les bords sans lib graphique
+  const samples = 4; // supersampling: smooths edges without a graphics library
   const artScale = maskable ? 0.62 : 1;
 
   for (let py = 0; py < size; py += 1) {
@@ -124,7 +124,7 @@ function render(size, { maskable }) {
 function write(path, buffer) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, buffer);
-  console.log(`${path} (${(buffer.length / 1024).toFixed(1)} ko)`);
+  console.log(`${path} (${(buffer.length / 1024).toFixed(1)} kB)`);
 }
 
 write('public/icon-192.png', render(192, { maskable: false }));

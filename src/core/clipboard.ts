@@ -1,6 +1,7 @@
 /**
- * Copie robuste : navigator.clipboard n'existe pas toujours en contexte non securise
- * (file:// dans Electron, http sur le reseau local), d'ou le repli sur execCommand.
+ * Resilient copy: navigator.clipboard is missing in insecure contexts
+ * (file:// under Electron, plain http on a local network), hence the
+ * execCommand fallback.
  */
 export async function copyText(text: string): Promise<boolean> {
   try {
@@ -9,7 +10,7 @@ export async function copyText(text: string): Promise<boolean> {
       return true;
     }
   } catch {
-    // on tente le repli ci-dessous
+    // fall through to the fallback below
   }
 
   try {

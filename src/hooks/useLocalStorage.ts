@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
- * useState persiste dans localStorage. Tolerant aux navigations privees et aux
- * stockages bloques : en cas d'echec on retombe simplement sur un etat en memoire.
+ * useState persisted to localStorage. Tolerates private browsing and blocked
+ * storage: on failure it simply falls back to in-memory state.
  */
 export function useLocalStorage<T>(key: string, initial: T) {
   const [value, setValue] = useState<T>(() => {
@@ -10,7 +10,7 @@ export function useLocalStorage<T>(key: string, initial: T) {
       const raw = window.localStorage.getItem(key);
       if (raw === null) return initial;
       const parsed = JSON.parse(raw) as T;
-      // Fusion peu profonde : un reglage ajoute plus tard garde sa valeur par defaut.
+      // Shallow merge: a setting added in a later version keeps its default.
       if (
         parsed !== null &&
         typeof parsed === 'object' &&
@@ -34,7 +34,7 @@ export function useLocalStorage<T>(key: string, initial: T) {
     try {
       window.localStorage.setItem(keyRef.current, JSON.stringify(value));
     } catch {
-      // stockage indisponible : on continue sans persistance
+      // storage unavailable: carry on without persistence
     }
   }, [value]);
 

@@ -18,9 +18,9 @@
   box-sizing: border-box;
 }
 
-/* La page elle-meme ne defile jamais : la barre de defilement du navigateur
-   apparaissait en dehors de la carte, ce qui n'a aucun sens pour un overlay.
-   Seule la liste d'historique defile, a l'interieur. */
+/* The page itself never scrolls: the browser scrollbar showed up outside the
+   card, which makes no sense for an overlay. Only the history list scrolls,
+   inside its own box. */
 html,
 body {
   margin: 0;
@@ -58,7 +58,7 @@ body[data-electron="true"] #root {
   flex-direction: column;
 }
 
-/* Zone souple : tout ce qui est fixe garde sa taille, l'historique absorbe le reste. */
+/* Flexible area: everything fixed keeps its size, the history absorbs the rest. */
 .app__body {
   flex: 1 1 auto;
   min-height: 0;
@@ -80,8 +80,8 @@ body[data-electron="true"] #root {
   }
 }
 
-/* Sur telephone la carte occupe tout l'ecran : pas de bordure flottante.
-   L'overlay Electron fait 420 px de large mais garde ses coins arrondis. */
+/* On a phone the card fills the screen, so no floating border. The Electron
+   overlay is 420 px wide but keeps its rounded corners. */
 @media (max-width: 459px) {
   body:not([data-electron="true"]) .app {
     border: none;
@@ -89,7 +89,7 @@ body[data-electron="true"] #root {
   }
 }
 
-/* ---------- barre de titre ---------- */
+/* ---------- title bar ---------- */
 
 .titlebar {
   display: flex;
@@ -130,7 +130,7 @@ body[data-electron="true"] .titlebar {
   -webkit-app-region: no-drag;
 }
 
-/* ---------- boutons ---------- */
+/* ---------- buttons ---------- */
 
 button {
   font: inherit;
@@ -177,7 +177,7 @@ select:focus-visible {
   outline-offset: 1px;
 }
 
-/* ---------- blocs de saisie ---------- */
+/* ---------- input blocks ---------- */
 
 .block {
   padding: 9px 10px;
@@ -208,8 +208,8 @@ select:focus-visible {
   gap: var(--gap);
 }
 
-/* L'axe est une pastille dans le champ : on economise une ligne de label par
-   bloc, soit assez de hauteur pour ne jamais avoir a defiler. */
+/* The axis is a chip inside the field, saving one label line per block,
+   which is exactly the height needed to never scroll. */
 .field {
   position: relative;
 }
@@ -250,7 +250,7 @@ select:focus-visible {
   border-color: var(--error);
 }
 
-/* ---------- resultat ---------- */
+/* ---------- result ---------- */
 
 .result {
   padding: 9px 10px 11px;
@@ -321,7 +321,7 @@ select:focus-visible {
   color: var(--accent);
 }
 
-/* ---------- historique ---------- */
+/* ---------- history ---------- */
 
 .history {
   flex: 1 1 auto;
@@ -381,9 +381,9 @@ select:focus-visible {
   padding: 9px 6px 9px 10px;
   font-family: var(--mono);
   font-size: 13px;
-  /* Le contenu n'est que des chiffres, sans jambage. Avec line-height: normal la
-     boite de ligne reserve de la place pour des descendantes qui n'existent pas,
-     et le texte parait remonte. On centre la boite cadratin a la place. */
+  /* The content is digits only, with no descenders. With line-height: normal
+     the line box reserves room for descenders that do not exist, and the text
+     looks lifted. Centre the em box instead. */
   line-height: 1;
   font-variant-numeric: tabular-nums;
   text-align: left;
@@ -394,7 +394,7 @@ select:focus-visible {
   background: var(--panel-hi);
 }
 
-/* Toujours visible et non revele au survol : sur telephone il n'y a pas de survol. */
+/* Always visible rather than revealed on hover: phones have no hover. */
 .history__delete {
   flex: none;
   display: inline-flex;
@@ -437,10 +437,10 @@ select:focus-visible {
   margin: 0;
 }
 
-/* ---------- panneau de reglages ---------- */
+/* ---------- settings sheet ---------- */
 
-/* Recouvre la carte au lieu de pousser le contenu vers le bas : c'est ce qui
-   obligeait a defiler pour atteindre les reglages. */
+/* Covers the card instead of pushing content down, which is what forced a
+   scroll to reach the settings. */
 .sheet {
   position: absolute;
   inset: 0;

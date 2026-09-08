@@ -1,4 +1,4 @@
-/** Pont expose par electron/preload.cjs. Absent quand l'app tourne dans un navigateur. */
+/** Bridge exposed by electron/preload.cjs. Absent when the app runs in a browser. */
 export interface WardogsBridge {
   hide(): void;
   quit(): void;
