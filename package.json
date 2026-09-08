@@ -12,7 +12,7 @@
     "test": "vitest run",
     "build": "npm run typecheck && vite build",
     "build:electron": "cross-env BUILD_TARGET=electron npm run build",
-    "build:win": "npm run build:electron && cross-env NODE_OPTIONS= electron-builder --win portable",
+    "build:win": "npm run build:electron && cross-env NODE_OPTIONS= electron-builder --win nsis",
     "icons": "node scripts/gen-icons.mjs",
     "preview": "vite preview"
   },
@@ -40,7 +40,13 @@
     "productName": "Wardogs Calculator",
     "directories": { "output": "release", "buildResources": "build" },
     "files": ["dist/**/*", "electron/**/*", "build/icon.png"],
-    "win": { "target": "portable", "icon": "build/icon.png" },
-    "portable": { "artifactName": "WardogsCalculator-${version}.exe" }
+    "win": { "target": "nsis", "icon": "build/icon.png" },
+    "nsis": {
+      "artifactName": "WardogsCalculator-Setup-${version}.exe",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

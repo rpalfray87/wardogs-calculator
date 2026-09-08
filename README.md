@@ -94,7 +94,7 @@ npm run typecheck
 
 ```bash
 npm run build      # PWA -> dist/
-npm run build:win  # portable overlay -> release/WardogsCalculator-1.0.0.exe
+npm run build:win  # overlay installer -> release/WardogsCalculator-Setup-1.0.0.exe
 npm run icons      # regenerates the PNGs from scripts/gen-icons.mjs
 ```
 
