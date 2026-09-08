@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   formatAngle,
   formatDistance,
+  stripGrouping,
   toDisplayAngle,
   type AngleSettings,
   type Solution,
@@ -12,13 +13,13 @@ import { useI18n } from '../i18n';
 interface ResultPanelProps {
   solution: Solution | null;
   settings: AngleSettings;
-  /** Message ephemere pousse par l'app (cible memorisee...). */
+  /** Transient message pushed by the app (target saved, and so on). */
   flash: string | null;
   hint: string;
 }
 
 export function ResultPanel({ solution, settings, flash, hint }: ResultPanelProps) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,12 +47,12 @@ export function ResultPanel({ solution, settings, flash, hint }: ResultPanelProp
         disabled={!angle}
         onClick={() =>
           angle &&
-          // On copie la valeur brute : le separateur de milliers ne doit pas
-          // partir dans le presse-papiers.
-          copy(t('result.azimuth'), formatAngle(angle, locale).replace(/[\s  ]/g, ''))
+          // Copy the bare value: the thousands separator must not travel to the
+          // clipboard, where it would break any field it is pasted into.
+          copy(t('result.azimuth'), stripGrouping(formatAngle(angle)))
         }
       >
-        {angle ? formatAngle(angle, locale) : '—'}
+        {angle ? formatAngle(angle) : '—'}
         {angle && <span className="readout__unit">{angle.suffix}</span>}
       </button>
 
@@ -66,7 +67,7 @@ export function ResultPanel({ solution, settings, flash, hint }: ResultPanelProp
           solution && copy(t('result.distance'), String(Math.round(solution.distance)))
         }
       >
-        {solution ? formatDistance(solution.distance, locale) : '—'}
+        {solution ? formatDistance(solution.distance) : '—'}
         {solution && <span className="readout__unit">m</span>}
       </button>
 

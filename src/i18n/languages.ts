@@ -1,28 +1,31 @@
 /**
- * Les 20 langues les plus parlees dans le monde, dans cet ordre.
- * `locale` sert au formatage des nombres (Intl), `dir` a l'orientation du texte.
+ * The 20 most widely spoken languages, in that order.
+ *
+ * `dir` drives text direction. There is deliberately no locale tag here:
+ * numbers are formatted identically in every language, see the grouping
+ * separator in core/ballistics.ts.
  */
 export const LANGUAGES = [
-  { code: 'en', name: 'English', locale: 'en-US', dir: 'ltr' },
-  { code: 'zh', name: '中文', locale: 'zh-CN', dir: 'ltr' },
-  { code: 'hi', name: 'हिन्दी', locale: 'hi-IN', dir: 'ltr' },
-  { code: 'es', name: 'Español', locale: 'es-ES', dir: 'ltr' },
-  { code: 'fr', name: 'Français', locale: 'fr-FR', dir: 'ltr' },
-  { code: 'ar', name: 'العربية', locale: 'ar', dir: 'rtl' },
-  { code: 'bn', name: 'বাংলা', locale: 'bn-BD', dir: 'ltr' },
-  { code: 'pt', name: 'Português', locale: 'pt-BR', dir: 'ltr' },
-  { code: 'ru', name: 'Русский', locale: 'ru-RU', dir: 'ltr' },
-  { code: 'ur', name: 'اردو', locale: 'ur-PK', dir: 'rtl' },
-  { code: 'id', name: 'Bahasa Indonesia', locale: 'id-ID', dir: 'ltr' },
-  { code: 'de', name: 'Deutsch', locale: 'de-DE', dir: 'ltr' },
-  { code: 'ja', name: '日本語', locale: 'ja-JP', dir: 'ltr' },
-  { code: 'tr', name: 'Türkçe', locale: 'tr-TR', dir: 'ltr' },
-  { code: 'ko', name: '한국어', locale: 'ko-KR', dir: 'ltr' },
-  { code: 'vi', name: 'Tiếng Việt', locale: 'vi-VN', dir: 'ltr' },
-  { code: 'it', name: 'Italiano', locale: 'it-IT', dir: 'ltr' },
-  { code: 'th', name: 'ไทย', locale: 'th-TH', dir: 'ltr' },
-  { code: 'pl', name: 'Polski', locale: 'pl-PL', dir: 'ltr' },
-  { code: 'nl', name: 'Nederlands', locale: 'nl-NL', dir: 'ltr' },
+  { code: 'en', name: 'English', dir: 'ltr' },
+  { code: 'zh', name: '中文', dir: 'ltr' },
+  { code: 'hi', name: 'हिन्दी', dir: 'ltr' },
+  { code: 'es', name: 'Español', dir: 'ltr' },
+  { code: 'fr', name: 'Français', dir: 'ltr' },
+  { code: 'ar', name: 'العربية', dir: 'rtl' },
+  { code: 'bn', name: 'বাংলা', dir: 'ltr' },
+  { code: 'pt', name: 'Português', dir: 'ltr' },
+  { code: 'ru', name: 'Русский', dir: 'ltr' },
+  { code: 'ur', name: 'اردو', dir: 'rtl' },
+  { code: 'id', name: 'Bahasa Indonesia', dir: 'ltr' },
+  { code: 'de', name: 'Deutsch', dir: 'ltr' },
+  { code: 'ja', name: '日本語', dir: 'ltr' },
+  { code: 'tr', name: 'Türkçe', dir: 'ltr' },
+  { code: 'ko', name: '한국어', dir: 'ltr' },
+  { code: 'vi', name: 'Tiếng Việt', dir: 'ltr' },
+  { code: 'it', name: 'Italiano', dir: 'ltr' },
+  { code: 'th', name: 'ไทย', dir: 'ltr' },
+  { code: 'pl', name: 'Polski', dir: 'ltr' },
+  { code: 'nl', name: 'Nederlands', dir: 'ltr' },
 ] as const;
 
 export type Language = (typeof LANGUAGES)[number]['code'];

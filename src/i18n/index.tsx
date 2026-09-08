@@ -27,9 +27,9 @@ export type { Language } from './languages';
 export type { TranslationKey } from './dict';
 
 /**
- * Toutes les traductions sont livrees avec l'application : elle doit rester
- * utilisable hors ligne (overlay Electron, PWA) et le volume de texte est trop
- * faible pour justifier un chargement paresseux.
+ * Every translation ships with the app: it has to keep working offline
+ * (Electron overlay, PWA) and the amount of text is far too small to justify
+ * lazy loading.
  */
 export const DICTS: Record<Language, Dict> = {
   en,
@@ -56,11 +56,11 @@ export const DICTS: Record<Language, Dict> = {
 
 export type Vars = Record<string, string | number>;
 
-/** Fonction de traduction : `t('history.deleteAria', { label })`. */
+/** Translation function: `t('history.deleteAria', { label })`. */
 export type Translate = (key: TranslationKey, vars?: Vars) => string;
 
 export function translate(language: Language, key: TranslationKey, vars?: Vars): string {
-  // Repli sur l'anglais : une cle manquante affiche du texte lisible, pas la cle.
+  // Fall back to English: a missing key shows readable text, not the key itself.
   const template = DICTS[language]?.[key] ?? en[key] ?? key;
   if (!vars) return template;
   return template.replace(/\{(\w+)\}/g, (match, name: string) =>
@@ -70,15 +70,12 @@ export function translate(language: Language, key: TranslationKey, vars?: Vars):
 
 interface I18nValue {
   language: Language;
-  /** Etiquette Intl associee, pour le formatage des nombres. */
-  locale: string;
   dir: 'ltr' | 'rtl';
   t: Translate;
 }
 
 const I18nContext = createContext<I18nValue>({
   language: DEFAULT_LANGUAGE,
-  locale: languageInfo(DEFAULT_LANGUAGE).locale,
   dir: 'ltr',
   t: (key, vars) => translate(DEFAULT_LANGUAGE, key, vars),
 });
@@ -94,14 +91,13 @@ export function I18nProvider({
     const info = languageInfo(language);
     return {
       language,
-      locale: info.locale,
       dir: info.dir,
       t: (key, vars) => translate(language, key, vars),
     };
   }, [language]);
 
-  // Le document lui-meme doit suivre : lecteurs d'ecran, cesures, et sens de
-  // lecture pour l'arabe et l'ourdou.
+  // The document itself has to follow: screen readers, hyphenation, and
+  // reading direction for Arabic and Urdu.
   useEffect(() => {
     document.documentElement.lang = value.language;
     document.documentElement.dir = value.dir;

@@ -23,9 +23,9 @@ export function TargetHistory({
   onDelete,
   onClear,
 }: TargetHistoryProps) {
-  const { t, locale } = useI18n();
-  // La phrase d'aide contient une touche a habiller en <kbd> : on decoupe le
-  // gabarit traduit autour du marqueur plutot que d'injecter du HTML.
+  const { t } = useI18n();
+  // The hint sentence contains a key to wrap in <kbd>: split the translated
+  // template around the placeholder rather than injecting HTML.
   const [emptyBefore, emptyAfter] = t('history.empty').split('{key}');
 
   return (
@@ -56,8 +56,8 @@ export function TargetHistory({
             const angle = toDisplayAngle(entry.azimuth, settings);
             const label = `${entry.x} / ${entry.y}`;
             return (
-              // La ligne n'est plus un bouton unique : elle en contient deux,
-              // charger la cible et la supprimer.
+              // A row is no longer a single button: it holds two, one to reload
+              // the target and one to delete it.
               <li key={entry.id} className="history__row">
                 <button
                   type="button"
@@ -67,12 +67,10 @@ export function TargetHistory({
                 >
                   <span className="history__coords">{label}</span>
                   <span className="history__azimuth">
-                    {formatAngle(angle, locale)}
+                    {formatAngle(angle)}
                     {angle.suffix === '°' ? '°' : ' mil'}
                   </span>
-                  <span className="history__distance">
-                    {formatDistance(entry.distance, locale)} m
-                  </span>
+                  <span className="history__distance">{formatDistance(entry.distance)} m</span>
                 </button>
                 <button
                   type="button"
